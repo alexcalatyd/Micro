@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320">
+  <defs>
+    <radialGradient id="glowBlue" cx="26%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#176bed" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#176bed" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowWhite" cx="80%" cy="76%" r="60%">
+      <stop offset="0%" stop-color="#8fc1ff" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#8fc1ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="textFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#cfe3ff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="320" fill="#0b0f1a"/>
+  <rect width="1200" height="320" fill="url(#glowBlue)"/>
+  <rect width="1200" height="320" fill="url(#glowWhite)"/>
+
+  <g opacity="0.08" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="107" x2="1200" y2="107"/>
+    <line x1="0" y1="214" x2="1200" y2="214"/>
+  </g>
+
+  <!-- icono de la app (marco de ventana + flecha de redimensionar), a juego -->
+  <g transform="translate(150,160)" opacity="0.5">
+    <rect x="-34" y="-34" width="68" height="68" rx="15" fill="none" stroke="#9cc4ff" stroke-width="5"/>
+    <path d="M 10 34 L 34 34 L 34 10" fill="none" stroke="#176bed" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M -2 22 L 22 -2" stroke="#9cc4ff" stroke-width="0" />
+  </g>
+  <g transform="translate(1050,160) scale(-1,1)" opacity="0.5">
+    <rect x="-34" y="-34" width="68" height="68" rx="15" fill="none" stroke="#9cc4ff" stroke-width="5"/>
+    <path d="M 10 34 L 34 34 L 34 10" fill="none" stroke="#176bed" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text x="600" y="172" text-anchor="middle"
+        font-family="ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif"
+        font-size="112" font-weight="700" letter-spacing="-1"
+        fill="url(#textFade)">Micro</text>
+
+  <text x="600" y="224" text-anchor="middle"
+        font-family="-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',system-ui,sans-serif"
+        font-size="25" font-weight="500" letter-spacing="0.5"
+        fill="rgba(228,234,246,0.55)">a tiny floating player that lives in your menu bar</text>
+</svg>

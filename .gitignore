@@ -1,0 +1,14 @@
+# Build
+App/.build/
+App/Micro.app/
+App/Micro.dmg
+App/rw.*.dmg
+App/*.tiff
+App/Resources/AppIcon.iconset/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Notas de desarrollo internas (no es documentación pública)
+handoff.md
