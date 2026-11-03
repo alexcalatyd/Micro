@@ -56,6 +56,7 @@ func keyboardShortcutsSection(language: AppLanguage) -> some View {
             shortcutRow(key: "← →", description: SettingsStrings.t(.shortcutSeek, language))
             shortcutRow(key: "␣", description: SettingsStrings.t(.shortcutPlayPause, language))
             shortcutRow(key: "⌘R", description: SettingsStrings.t(.shortcutReload, language))
+            shortcutRow(key: "⌘H", description: SettingsStrings.t(.shortcutHide, language))
             shortcutRow(key: "⌘W", description: SettingsStrings.t(.shortcutClose, language))
         }
     }

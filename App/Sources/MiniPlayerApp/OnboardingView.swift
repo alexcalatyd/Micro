@@ -34,6 +34,7 @@ struct OnboardingView: View {
                         shortcutRow(key: "← →", description: SettingsStrings.t(.shortcutSeek, language))
                         shortcutRow(key: "␣", description: SettingsStrings.t(.shortcutPlayPause, language))
                         shortcutRow(key: "⌘R", description: SettingsStrings.t(.shortcutReload, language))
+                        shortcutRow(key: "⌘H", description: SettingsStrings.t(.shortcutHide, language))
                         shortcutRow(key: "⌘W", description: SettingsStrings.t(.shortcutClose, language))
                     }
                     .padding(.top, 4)
@@ -41,7 +42,7 @@ struct OnboardingView: View {
             }
             .padding(.horizontal, 28)
             .padding(.top, 36)
-            .frame(height: 300, alignment: .top)
+            .frame(height: 330, alignment: .top)
 
             Spacer(minLength: 16)
 

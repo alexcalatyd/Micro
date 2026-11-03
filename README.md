@@ -67,8 +67,8 @@ Micro has no Dock icon and no main window — look for its icon in the **menu ba
 The mini player opens right there, and the tab you picked it from pauses itself automatically.
 
 - **Move** the window by dragging its top edge.
-- **Resize** by dragging the bottom-right corner — it always keeps a 16:9 shape, no black bars.
-- ⚙️ and the resize corner only show up while your mouse is over the window, and fade out a couple of seconds after you move it away.
+- **Resize** by dragging any of the four corners — it always keeps a 16:9 shape, no black bars.
+- ⚙️ and the resize corners only show up while your mouse is over the window, and fade out a couple of seconds after you move it away.
 
 ## Keyboard shortcuts
 
@@ -79,6 +79,7 @@ These act on the video directly, no need to click into it first:
 | `←` `→` | seek ±10s |
 | `space` | play / pause |
 | `⌘R` | reload |
+| `⌘H` | hide the window (keeps playing — bring it back from the menu bar) |
 | `⌘W` | close |
 
 ## Permissions (first time only)

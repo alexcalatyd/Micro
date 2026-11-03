@@ -8,6 +8,10 @@ struct StatusBarPanelView: View {
     var onSelectSize: (NSSize) -> Void
     var onSelectLanguage: (AppLanguage) -> Void
     var onReloadActive: () -> Void
+    /// true si ahora mismo hay mini reproductores ocultos (⌘H): el botón
+    /// pasa a ser "Mostrar" para poder recuperarlos.
+    var hasHiddenPlayers: Bool
+    var onToggleHidden: () -> Void
     var onCloseActive: () -> Void
     var onShowGuide: () -> Void
     var onQuit: () -> Void
@@ -26,6 +30,12 @@ struct StatusBarPanelView: View {
                 HStack {
                     Button(action: onReloadActive) {
                         Label(SettingsStrings.t(.reload, language), systemImage: "arrow.clockwise")
+                    }
+                    Button(action: onToggleHidden) {
+                        Label(
+                            SettingsStrings.t(hasHiddenPlayers ? .show : .hide, language),
+                            systemImage: hasHiddenPlayers ? "eye" : "eye.slash"
+                        )
                     }
                     Spacer()
                     Button(role: .destructive, action: onCloseActive) {

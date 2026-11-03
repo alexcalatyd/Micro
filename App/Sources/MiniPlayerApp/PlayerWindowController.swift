@@ -14,7 +14,7 @@ final class PlayerWindowController: NSWindowController, NSWindowDelegate, WKNavi
     private var keyMonitor: Any?
     private var settingsPopover: NSPopover?
     private var gearButton: NSButton!
-    private var resizeHandle: ResizeHandleView!
+    private var resizeHandles: [ResizeHandleView] = []
     private var hideControlsTimer: Timer?
     // Tras cuántos segundos sin ratón encima se esconden ⚙️ y la esquina de redimensionar.
     private static let hideControlsDelay: TimeInterval = 2.5
@@ -22,6 +22,11 @@ final class PlayerWindowController: NSWindowController, NSWindowDelegate, WKNavi
     /// Avisa a quien creó este controlador de que la ventana se cerró, para
     /// que pueda quitarlo de su lista (evita acumular controladores muertos).
     var onWindowClosed: (() -> Void)?
+
+    /// Pedido de ocultar (⌘H o el botón de ajustes). Lo gestiona el
+    /// AppDelegate para esconder todos los mini reproductores a la vez,
+    /// igual que el ⌘H de cualquier app de macOS.
+    var onRequestHide: (() -> Void)?
 
     // Muchos sitios (Netflix sobre todo) hacen detección de navegador agresiva
     // y tratan distinto a WKWebView si no se identifica como Safari real.
@@ -128,14 +133,28 @@ final class PlayerWindowController: NSWindowController, NSWindowDelegate, WKNavi
         gearButton.target = self
         gearButton.action = #selector(showSettingsMenu(_:))
         gearButton.alphaValue = 0 // oculto hasta que el ratón pase por encima de la ventana
-        content.addSubview(gearButton) // por encima de todo, intercepta su propio clic
         self.gearButton = gearButton
 
-        let resizeHandle = ResizeHandleView(frame: NSRect(x: content.bounds.width - 20, y: 4, width: 16, height: 16))
-        resizeHandle.autoresizingMask = [.minXMargin, .maxYMargin] // se queda fija en la esquina inferior derecha
-        resizeHandle.alphaValue = 0 // oculto hasta que el ratón pase por encima de la ventana
-        content.addSubview(resizeHandle)
-        self.resizeHandle = resizeHandle
+        // Una esquina de agarre en cada esquina: redimensionar es igual de
+        // fácil desde cualquiera de las cuatro. Cada una se queda clavada en
+        // su esquina al redimensionar (autoresizingMask) y, arriba, van por
+        // encima de la franja de arrastre para ganarle el clic.
+        for corner in [ResizeHandleView.Corner.bottomRight, .bottomLeft, .topRight, .topLeft] {
+            // Arriba a la derecha está el ⚙️, así que esa esquina se corre un
+            // poco a la izquierda para no pisarse con él.
+            let x: CGFloat = corner.isLeft ? 4 : (corner == .topRight ? content.bounds.width - 48 : content.bounds.width - 20)
+            let y: CGFloat = corner.isTop ? content.bounds.height - 20 : 4
+            let handle = ResizeHandleView(frame: NSRect(x: x, y: y, width: 16, height: 16), corner: corner)
+            handle.autoresizingMask = [
+                corner.isLeft ? .maxXMargin : .minXMargin,
+                corner.isTop ? .minYMargin : .maxYMargin
+            ]
+            handle.alphaValue = 0 // oculto hasta que el ratón pase por encima de la ventana
+            content.addSubview(handle)
+            resizeHandles.append(handle)
+        }
+
+        content.addSubview(gearButton) // por encima de todo, intercepta su propio clic
 
         // Solo se ven ⚙️ y la esquina de redimensionar mientras el ratón
         // está sobre la ventana; se esconden solos a los pocos segundos de
@@ -176,6 +195,7 @@ final class PlayerWindowController: NSWindowController, NSWindowDelegate, WKNavi
                 switch event.charactersIgnoringModifiers {
                 case "r": self.reloadPage(); return nil
                 case "w": self.close(); return nil
+                case "h": self.requestHide(); return nil
                 default: return event
                 }
             }
@@ -227,7 +247,7 @@ final class PlayerWindowController: NSWindowController, NSWindowDelegate, WKNavi
         NSAnimationContext.runAnimationGroup { context in
             context.duration = 0.25
             gearButton.animator().alphaValue = visible ? 1 : 0
-            resizeHandle.animator().alphaValue = visible ? 1 : 0
+            resizeHandles.forEach { $0.animator().alphaValue = visible ? 1 : 0 }
         }
     }
 
@@ -253,6 +273,9 @@ final class PlayerWindowController: NSWindowController, NSWindowDelegate, WKNavi
                 self?.reloadPage()
                 self?.settingsPopover?.close()
             },
+            onHide: { [weak self] in
+                self?.requestHide()
+            },
             onClose: { [weak self] in
                 self?.settingsPopover?.close()
                 self?.close()
@@ -276,6 +299,32 @@ final class PlayerWindowController: NSWindowController, NSWindowDelegate, WKNavi
         } else {
             webView.reload()
         }
+    }
+
+    // MARK: - Ocultar / mostrar (⌘H)
+
+    /// ⌘H y el botón "Ocultar" de los ajustes. El vídeo sigue sonando
+    /// mientras está oculta (como una radio); se recupera desde el icono de
+    /// la barra de menú.
+    private func requestHide() {
+        settingsPopover?.close()
+        if let onRequestHide {
+            onRequestHide()
+        } else {
+            hidePlayer()
+        }
+    }
+
+    var isPlayerHidden: Bool { window?.isVisible == false }
+
+    func hidePlayer() {
+        settingsPopover?.close()
+        window?.orderOut(nil)
+    }
+
+    func showPlayer() {
+        window?.makeKeyAndOrderFront(nil)
+        window?.makeFirstResponder(webView)
     }
 
     /// Permiten que ajustes externos (ej. el icono de la barra de menú) actualicen esta ventana ya abierta.

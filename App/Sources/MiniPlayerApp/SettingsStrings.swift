@@ -21,7 +21,10 @@ enum SettingsStrings {
         case shortcutPlayPause
         case shortcutReload
         case shortcutClose
+        case shortcutHide
         case reload
+        case hide
+        case show
         case close
         case quit
         case languageSection
@@ -47,7 +50,10 @@ enum SettingsStrings {
         .shortcutPlayPause: "Play / pause",
         .shortcutReload: "Reload",
         .shortcutClose: "Close",
+        .shortcutHide: "Hide window",
         .reload: "Reload",
+        .hide: "Hide",
+        .show: "Show",
         .close: "Close",
         .quit: "Quit Micro",
         .languageSection: "LANGUAGE",
@@ -73,7 +79,10 @@ enum SettingsStrings {
         .shortcutPlayPause: "Reproducir / pausar",
         .shortcutReload: "Recargar",
         .shortcutClose: "Cerrar",
+        .shortcutHide: "Ocultar ventana",
         .reload: "Recargar",
+        .hide: "Ocultar",
+        .show: "Mostrar",
         .close: "Cerrar",
         .quit: "Salir de Micro",
         .languageSection: "IDIOMA",

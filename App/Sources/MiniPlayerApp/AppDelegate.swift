@@ -141,6 +141,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.reloadActive()
                 self?.statusPopover?.close()
             },
+            hasHiddenPlayers: hasHiddenPlayers,
+            onToggleHidden: { [weak self] in
+                guard let self else { return }
+                self.hasHiddenPlayers ? self.showAllPlayers() : self.hideAllPlayers()
+                self.statusPopover?.close()
+            },
             onCloseActive: { [weak self] in
                 self?.closeActive()
                 self?.statusPopover?.close()
@@ -182,6 +188,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         popover.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
     }
 
+    // MARK: - Ocultar / mostrar todos los mini reproductores (⌘H)
+
+    /// ⌘H esconde todas las ventanas a la vez (como el ⌘H de cualquier app
+    /// de macOS), sin pausar el vídeo. Al no quedar ninguna ventana visible,
+    /// el único camino de vuelta es el icono de la barra de menú — de ahí el
+    /// botón "Mostrar" del panel.
+    private var hasHiddenPlayers: Bool { players.contains(where: { $0.isPlayerHidden }) }
+
+    private func hideAllPlayers() {
+        players.forEach { $0.hidePlayer() }
+    }
+
+    private func showAllPlayers() {
+        NSApp.activate(ignoringOtherApps: true)
+        players.forEach { $0.showPlayer() }
+    }
+
     private func reloadActive() {
         frontmostPlayer()?.reloadPage()
     }
@@ -215,6 +238,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func openPlayer(for url: URL, startSeconds: Double? = nil, originTab: BrowserTab? = nil, centerOnScreen: Bool = false) {
         let controller = PlayerWindowController(url: url, startSeconds: startSeconds, originTab: originTab, centerOnScreen: centerOnScreen)
+        controller.onRequestHide = { [weak self] in self?.hideAllPlayers() }
         controller.onWindowClosed = { [weak self, weak controller] in
             guard let self, let controller else { return }
             self.players.removeAll { $0 === controller }

@@ -7,6 +7,7 @@ struct SettingsPanelView: View {
     var onSelectSize: (NSSize) -> Void
     var onSelectLanguage: (AppLanguage) -> Void
     var onReload: () -> Void
+    var onHide: () -> Void
     var onClose: () -> Void
 
     var body: some View {
@@ -30,6 +31,9 @@ struct SettingsPanelView: View {
             HStack {
                 Button(action: onReload) {
                     Label(SettingsStrings.t(.reload, language), systemImage: "arrow.clockwise")
+                }
+                Button(action: onHide) {
+                    Label(SettingsStrings.t(.hide, language), systemImage: "eye.slash")
                 }
                 Spacer()
                 Button(role: .destructive, action: onClose) {
