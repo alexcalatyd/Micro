@@ -12,22 +12,26 @@ enum YouTubeURLHelper {
     }
 
     static func parse(_ url: URL) -> Parsed? {
-        guard let host = url.host else { return nil }
+        guard let host = url.host?.lowercased() else { return nil }
 
         var videoID: String?
         var startSeconds: Int?
 
-        if host.contains("youtube.com"), url.path == "/watch" {
+        if isHost(host, domain: "youtube.com"), url.path == "/watch" {
             let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
             videoID = items.first(where: { $0.name == "v" })?.value
             startSeconds = items.first(where: { $0.name == "t" })?.value.flatMap(parseSeconds)
-        } else if host.contains("youtu.be") {
+        } else if isHost(host, domain: "youtu.be") {
             videoID = url.pathComponents.last
             let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
             startSeconds = items.first(where: { $0.name == "t" })?.value.flatMap(parseSeconds)
         }
 
-        guard let id = videoID, !id.isEmpty else { return nil }
+        // El ID acaba dentro del JavaScript de la página del reproductor (y en
+        // la URL de la miniatura), así que solo aceptamos el formato real de
+        // YouTube: 11 caracteres de [A-Za-z0-9_-]. Cualquier otra cosa se
+        // descarta para que un enlace preparado no pueda inyectar código.
+        guard let id = videoID, isValidVideoID(id) else { return nil }
         return Parsed(videoID: id, startSeconds: startSeconds ?? 0)
     }
 
@@ -99,6 +103,18 @@ enum YouTubeURLHelper {
         </body>
         </html>
         """
+    }
+
+    /// Dominio exacto o subdominio suyo (www., m., music.…). Evita aceptar
+    /// cosas como "youtube.com.malo.net" o "notyoutube.com".
+    private static func isHost(_ host: String, domain: String) -> Bool {
+        host == domain || host.hasSuffix("." + domain)
+    }
+
+    private static func isValidVideoID(_ id: String) -> Bool {
+        id.count == 11 && id.unicodeScalars.allSatisfy { scalar in
+            scalar.isASCII && (CharacterSet.alphanumerics.contains(scalar) || scalar == "-" || scalar == "_")
+        }
     }
 
     /// Acepta "90", "90s", "1m30s"
