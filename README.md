@@ -39,6 +39,19 @@ Sometimes you just want to keep half an eye on a video while you work, without a
 
 ## Installation
 
+### With Homebrew
+
+```sh
+brew tap alexcalatyd/tap
+brew trust alexcalatyd/tap   # Homebrew asks you to trust third-party taps once
+brew install --cask alexcalatyd/tap/micro
+```
+
+It isn't notarized by Apple, so the first time macOS blocks it: open it from
+**System Settings → Privacy & Security → Open Anyway** (Homebrew reminds you how).
+
+### Manually
+
 Download the latest `Micro.dmg` from [Releases](../../releases), open it, and drag `Micro.app` into `Applications`.
 
 > [!IMPORTANT]
